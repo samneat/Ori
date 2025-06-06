@@ -8,7 +8,7 @@ export default function FeaturesSection() {
 
   return (
     <section className="py-20 px-6 lg:px-8 bg-[#f8f8fb] dark:bg-[#434247] transition-colors duration-300">
-      <div className="container mx-auto max-w-[1920px] max-h-[1080px] overflow-hidden">
+      <div className="container mx-auto max-w-[1920px]">
         {/* Main Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl xl:text-6xl font-light leading-tight max-w-5xl mx-auto text-[#59585e] dark:text-gray-100 transition-colors duration-300">
@@ -17,10 +17,10 @@ export default function FeaturesSection() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-12 lg:gap-16 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 mb-16">
           {/* Feature 1 */}
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex justify-center hidden md:flex">
               <div className="w-16 h-16 flex items-center justify-center">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
@@ -96,7 +96,7 @@ export default function FeaturesSection() {
 
           {/* Feature 2 */}
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex justify-center hidden md:flex">
               <div className="w-16 h-16 flex items-center justify-center">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
@@ -153,7 +153,7 @@ export default function FeaturesSection() {
 
           {/* Feature 3 */}
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex justify-center hidden md:flex">
               <div className="w-16 h-16 flex items-center justify-center">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
@@ -213,7 +213,7 @@ export default function FeaturesSection() {
         <div className="text-center">
           <button
             onClick={openWaitingListModal}
-            className="inline-flex items-center text-lg font-medium hover:opacity-80 transition-opacity text-[#bb2649] dark:text-[#E0DEED] cursor-pointer"
+            className="inline-flex items-center text-lg font-medium hover:opacity-80 transition-opacity text-[#bb2649] dark:text-[#E0DEED] cursor-pointer px-4 py-2 min-h-[44px] touch-manipulation"
           >
             Join our exclusive waiting list
             <ChevronRight className="ml-2 w-5 h-5" />
