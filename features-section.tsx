@@ -8,7 +8,7 @@ export default function FeaturesSection() {
 
   return (
     <section className="py-20 px-6 lg:px-8 bg-[#f8f8fb] dark:bg-[#434247] transition-colors duration-300">
-      <div className="container mx-auto max-w-[1920px] max-h-[1080px] overflow-hidden">
+      <div className="container mx-auto max-w-[1920px]">
         {/* Main Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl xl:text-6xl font-light leading-tight max-w-5xl mx-auto text-[#59585e] dark:text-gray-100 transition-colors duration-300">
