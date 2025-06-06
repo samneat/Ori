@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="py-16 px-6 lg:px-8 bg-[#f8f8fb] dark:bg-[#434247] transition-colors duration-300">
-      <div className="container mx-auto max-w-7xl">
+    <footer className="w-full py-16 px-6 lg:px-8 bg-[#f8f8fb] dark:bg-[#434247] transition-colors duration-300">
+      <div className="w-full max-w-none mx-auto">
         {/* Logo and Contact Info */}
         <div className="mb-16">
           {/* Logo */}
