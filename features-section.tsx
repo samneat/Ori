@@ -8,16 +8,16 @@ export default function FeaturesSection() {
 
   return (
     <section className="py-20 px-6 lg:px-8 bg-[#f8f8fb] dark:bg-[#434247] transition-colors duration-300">
-      <div className="container mx-auto max-w-[1920px]">
+      <div className="container mx-auto max-w-[1920px] max-h-[1080px] overflow-hidden">
         {/* Main Heading */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight max-w-5xl mx-auto text-[#59585e] dark:text-gray-100 transition-colors duration-300">
+          <h2 className="text-4xl lg:text-5xl xl:text-6xl font-light leading-tight max-w-5xl mx-auto text-[#59585e] dark:text-gray-100 transition-colors duration-300">
             Unlock Your Potential with Ori AI-Powered Matching Technology
           </h2>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12 lg:gap-16 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 mb-16">
           {/* Feature 1 */}
           <div className="text-center">
             <div className="mb-8 flex justify-center">
@@ -25,16 +25,16 @@ export default function FeaturesSection() {
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
                   alt="ORI Logo"
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 dark:brightness-0 dark:invert transition-all duration-300"
+                  className="w-12 h-12 dark:brightness-0 dark:invert transition-all duration-300"
                 />
               </div>
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-medium mb-4 sm:mb-6 leading-tight text-[#483312] dark:text-gray-100 transition-colors duration-300">
+            <h3 className="text-xl lg:text-2xl font-medium mb-6 leading-tight text-[#483312] dark:text-gray-100 transition-colors duration-300">
               Comprehensive Services Tailored for Startups and SMEs in the GCC
             </h3>
-            <div className="space-y-3 sm:space-y-4 text-base sm:text-lg leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+            <div className="space-y-4 text-lg leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -45,8 +45,8 @@ export default function FeaturesSection() {
                   Connect instantly with top executive advisors, NEDs, and investors to strengthen your leadership team.
                 </p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -55,8 +55,8 @@ export default function FeaturesSection() {
                 </div>
                 <p>AI-powered matching finds the right experts, mentors, and partners for your stage and sector.</p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -65,8 +65,8 @@ export default function FeaturesSection() {
                 </div>
                 <p>Affordable access to world-class expertise through flexible fractional advisory services.</p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -78,8 +78,8 @@ export default function FeaturesSection() {
                   resources.
                 </p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -101,16 +101,16 @@ export default function FeaturesSection() {
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
                   alt="ORI Logo"
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 dark:brightness-0 dark:invert transition-all duration-300"
+                  className="w-12 h-12 dark:brightness-0 dark:invert transition-all duration-300"
                 />
               </div>
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-medium mb-4 sm:mb-6 leading-tight text-[#483312] dark:text-gray-100 transition-colors duration-300">
+            <h3 className="text-xl lg:text-2xl font-medium mb-6 leading-tight text-[#483312] dark:text-gray-100 transition-colors duration-300">
               Expert Guidance Focused on the Unique GCC Market Landscape
             </h3>
-            <div className="space-y-3 sm:space-y-4 text-base sm:text-lg leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+            <div className="space-y-4 text-lg leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -122,8 +122,8 @@ export default function FeaturesSection() {
                   connections for the unique GCC business environment.
                 </p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -135,8 +135,8 @@ export default function FeaturesSection() {
                   and strengthen investor confidence.
                 </p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -158,16 +158,16 @@ export default function FeaturesSection() {
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
                   alt="ORI Logo"
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 dark:brightness-0 dark:invert transition-all duration-300"
+                  className="w-12 h-12 dark:brightness-0 dark:invert transition-all duration-300"
                 />
               </div>
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-medium mb-4 sm:mb-6 leading-tight text-[#483312] dark:text-gray-100 transition-colors duration-300">
+            <h3 className="text-xl lg:text-2xl font-medium mb-6 leading-tight text-[#483312] dark:text-gray-100 transition-colors duration-300">
               Transformative Leadership for Sustainable Growth and Innovation
             </h3>
-            <div className="space-y-3 sm:space-y-4 text-base sm:text-lg leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+            <div className="space-y-4 text-lg leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -179,8 +179,8 @@ export default function FeaturesSection() {
                   capability, dramatically improving funding prospects.
                 </p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -192,8 +192,8 @@ export default function FeaturesSection() {
                   supporting agile business development without high overheads.
                 </p>
               </div>
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 mt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 flex-shrink-0 mt-1">
                   <img
                     src="/images/ori-small-logo.svg"
                     alt="ORI Logo"
@@ -213,7 +213,7 @@ export default function FeaturesSection() {
         <div className="text-center">
           <button
             onClick={openWaitingListModal}
-            className="inline-flex items-center text-base sm:text-lg font-medium hover:opacity-80 transition-opacity text-[#bb2649] dark:text-[#E0DEED] cursor-pointer"
+            className="inline-flex items-center text-lg font-medium hover:opacity-80 transition-opacity text-[#bb2649] dark:text-[#E0DEED] cursor-pointer"
           >
             Join our exclusive waiting list
             <ChevronRight className="ml-2 w-5 h-5" />
