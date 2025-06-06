@@ -20,7 +20,7 @@ export default function FeaturesSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 mb-16">
           {/* Feature 1 */}
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex justify-center hidden md:flex">
               <div className="w-16 h-16 flex items-center justify-center">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
@@ -96,7 +96,7 @@ export default function FeaturesSection() {
 
           {/* Feature 2 */}
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex justify-center hidden md:flex">
               <div className="w-16 h-16 flex items-center justify-center">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
@@ -153,7 +153,7 @@ export default function FeaturesSection() {
 
           {/* Feature 3 */}
           <div className="text-center">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-8 flex justify-center hidden md:flex">
               <div className="w-16 h-16 flex items-center justify-center">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/small-logo-Gq8QJs09roekmVzBpiBEI7SvmlXXe4.svg"
