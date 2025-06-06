@@ -213,7 +213,7 @@ export default function FeaturesSection() {
         <div className="text-center">
           <button
             onClick={openWaitingListModal}
-            className="inline-flex items-center text-lg font-medium hover:opacity-80 transition-opacity text-[#bb2649] dark:text-[#E0DEED] cursor-pointer"
+            className="inline-flex items-center text-lg font-medium hover:opacity-80 transition-opacity text-[#bb2649] dark:text-[#E0DEED] cursor-pointer px-4 py-2 min-h-[44px] touch-manipulation"
           >
             Join our exclusive waiting list
             <ChevronRight className="ml-2 w-5 h-5" />
