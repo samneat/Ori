@@ -1,4 +1,4 @@
-import { Linkedin, Twitter, Globe } from "lucide-react"
+import { Linkedin, Youtube, Twitter } from "lucide-react"
 
 export default function Team() {
   return (
@@ -71,24 +71,22 @@ export default function Team() {
             </div>
 
             {/* Social Links */}
-            <div className="flex justify-center lg:justify-start space-x-4">
+            <div className="flex justify-center space-x-4">
               <a
-                href="#"
+                href="https://www.linkedin.com/in/calvinlp/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
               >
                 <Linkedin className="w-6 h-6" />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@CalvinJamesGetUAEJobs-z8c"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
               >
-                <Twitter className="w-6 h-6" />
-              </a>
-              <a
-                href="#"
-                className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-              >
-                <Globe className="w-6 h-6" />
+                <Youtube className="w-6 h-6" />
               </a>
             </div>
           </div>
@@ -150,24 +148,22 @@ export default function Team() {
             </div>
 
             {/* Social Links */}
-            <div className="flex justify-center lg:justify-start space-x-4">
+            <div className="flex justify-center space-x-4">
               <a
-                href="#"
+                href="https://www.linkedin.com/in/raulcouga/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
               >
                 <Linkedin className="w-6 h-6" />
               </a>
               <a
-                href="#"
+                href="https://x.com/RaulCouGa"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
               >
                 <Twitter className="w-6 h-6" />
-              </a>
-              <a
-                href="#"
-                className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-              >
-                <Globe className="w-6 h-6" />
               </a>
             </div>
           </div>
