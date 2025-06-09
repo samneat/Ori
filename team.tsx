@@ -71,7 +71,7 @@ export default function Team() {
             </div>
 
             {/* Social Links */}
-            <div className="flex justify-center lg:justify-start space-x-4">
+            <div className="flex justify-center space-x-4">
               <a
                 href="#"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
@@ -150,7 +150,7 @@ export default function Team() {
             </div>
 
             {/* Social Links */}
-            <div className="flex justify-center lg:justify-start space-x-4">
+            <div className="flex justify-center space-x-4">
               <a
                 href="#"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
