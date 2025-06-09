@@ -88,8 +88,77 @@ export default function Team() {
               >
                 <Youtube className="w-6 h-6" />
               </a>
+            </div>
+          </div>
+
+          {/* Raúl Coutinho-Garrido */}
+          <div className="text-center lg:text-left">
+            {/* Profile Image */}
+            <div className="mb-8 flex justify-center">
+              <div className="w-80 h-80 overflow-hidden rounded-lg">
+                <img
+                  src="/images/raul-coutinho-garrido.png"
+                  alt="Raúl Coutinho-Garrido - Chief Innovation"
+                  className="w-full h-full object-cover grayscale"
+                />
+              </div>
+            </div>
+
+            {/* Name and Title */}
+            <div className="mb-6 text-center">
+              <h3 className="text-2xl lg:text-3xl font-medium mb-2 text-[#483312] dark:text-gray-100 transition-colors duration-300">
+                Raúl Coutinho-Garrido
+              </h3>
+              <p className="text-lg text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+                Chief Innovation
+              </p>
+            </div>
+
+            {/* Bio Content */}
+            <div className="space-y-6 mb-8">
+              <div>
+                <h4 className="text-lg font-medium mb-2 text-[#483312] dark:text-gray-100 transition-colors duration-300">
+                  Founder - NED, marionete (2014 - Present)
+                </h4>
+                <p className="text-base leading-relaxed mb-3 text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+                  UK deep-tech consultancy specialised in financial services for clients across Europe - HSBC, Bank Of
+                  England,
+                </p>
+                <p className="text-base leading-relaxed mb-3 text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+                  Barclays, Saxo, BGC, Danske, Axa, Maersk Beazley.
+                </p>
+                <p className="text-base leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+                  Led frontier tech landscape solutions. With a commitment for disruptive innovation, I have cultivated
+                  a culture of creativity and excellence within the organisation, driving transformative projects that
+                  leverage cutting-edge technologies to solve complex business challenges.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-medium mb-2 text-[#483312] dark:text-gray-100 transition-colors duration-300">
+                  Co-Founder, maam.ai (2024 - Present)
+                </h4>
+                <p className="text-base leading-relaxed text-[#59585e] dark:text-gray-300 transition-colors duration-300">
+                  A social network that provides mothers in countries with poor national healthcare services, a suite of
+                  AI-powered, specialised counselling bots addressing diverse needs from maternity and infant care to
+                  nutrition and stress management, builds meaningful communities both online and offline, and actively
+                  promotes connections in physical local spaces.
+                </p>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex justify-center space-x-4">
               <a
-                href="https://twitter.com/CalvinJamesUAE"
+                href="https://www.linkedin.com/in/raulcouga/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+              >
+                <Linkedin className="w-6 h-6" />
+              </a>
+              <a
+                href="https://x.com/RaulCouGa"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#59585e] dark:text-gray-300 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
