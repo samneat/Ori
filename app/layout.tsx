@@ -1,8 +1,8 @@
 import type React from "react"
 import { Jura } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "../components/theme-provider"
-import { ModalProvider } from "../components/modal-provider"
+import { ThemeProvider } from "@/components/theme-provider"
+import { ModalProvider } from "@/components/modal-provider"
 
 const jura = Jura({
   subsets: ["latin"],
@@ -28,5 +28,5 @@ export default function RootLayout({
 }
 
 export const metadata = {
-      generator: 'v0.dev'
-    };
+  generator: "v0.dev",
+}
