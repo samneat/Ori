@@ -392,46 +392,9 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
 
                 {/* Company and Role */}
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="company"
-                      className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-2"
-                    >
-                      Company *
-                    </label>
-                    <Input
-                      id="company"
-                      type="text"
-                      value={formData.company}
-                      onChange={handleInputChange("company")}
-                      className={`w-full h-12 px-4 border-2 transition-colors duration-200 ${
-                        errors.company
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-300 dark:border-gray-600 focus:border-[#bb2649] dark:focus:border-[#E0DEED]"
-                      } dark:bg-gray-700 dark:text-gray-100`}
-                      disabled={isSubmitting}
-                    />
-                    {errors.company && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.company}</p>}
-                  </div>
+                  
 
-                  <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-2">
-                      Role *
-                    </label>
-                    <Input
-                      id="role"
-                      type="text"
-                      value={formData.role}
-                      onChange={handleInputChange("role")}
-                      className={`w-full h-12 px-4 border-2 transition-colors duration-200 ${
-                        errors.role
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-300 dark:border-gray-600 focus:border-[#bb2649] dark:focus:border-[#E0DEED]"
-                      } dark:bg-gray-700 dark:text-gray-100`}
-                      disabled={isSubmitting}
-                    />
-                    {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
-                  </div>
+                  
                 </div>
 
                 {/* Submit Button */}
