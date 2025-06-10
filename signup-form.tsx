@@ -17,6 +17,11 @@ interface SignUpFormData {
   confirmPassword: string
   company: string
   role: string
+  userTypes: {
+    advisor: boolean
+    investor: boolean
+    startup: boolean
+  }
 }
 
 interface FormErrors {
@@ -27,6 +32,7 @@ interface FormErrors {
   confirmPassword?: string
   company?: string
   role?: string
+  userTypes?: string
   submit?: string
 }
 
@@ -39,6 +45,11 @@ export default function SignUpForm() {
     confirmPassword: "",
     company: "",
     role: "",
+    userTypes: {
+      advisor: false,
+      investor: false,
+      startup: false,
+    },
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
@@ -84,6 +95,11 @@ export default function SignUpForm() {
       newErrors.role = "Role is required"
     }
 
+    // Check if at least one user type is selected
+    if (!formData.userTypes.advisor && !formData.userTypes.investor && !formData.userTypes.startup) {
+      newErrors.userTypes = "Please select at least one user type"
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -103,21 +119,28 @@ export default function SignUpForm() {
       }
 
       // Prepare template parameters for EmailJS
+      const selectedUserTypes = Object.entries(formData.userTypes)
+        .filter(([_, selected]) => selected)
+        .map(([type, _]) => type)
+        .join(", ")
+
       const templateParams = {
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
         company: formData.company,
         role: formData.role,
+        user_types: selectedUserTypes,
         full_name: `${formData.firstName} ${formData.lastName}`,
         to_email: "info@ori.ventures",
         subject: "New Ori Ventures Sign Up",
         message: `New user registration:
-      
+    
 Name: ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
 Company: ${formData.company}
 Role: ${formData.role}
+User Types: ${selectedUserTypes}
 Registration Date: ${new Date().toLocaleDateString()}
 Registration Time: ${new Date().toLocaleTimeString()}`,
       }
@@ -147,6 +170,11 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
             confirmPassword: "",
             company: "",
             role: "",
+            userTypes: {
+              advisor: false,
+              investor: false,
+              startup: false,
+            },
           })
           setIsSuccess(false)
           window.location.href = "/"
@@ -186,6 +214,21 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
       setErrors((prev) => ({ ...prev, submit: undefined }))
     }
   }
+
+  const handleCheckboxChange =
+    (type: "advisor" | "investor" | "startup") => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        userTypes: {
+          ...prev.userTypes,
+          [type]: e.target.checked,
+        },
+      }))
+      // Clear error when user makes a selection
+      if (errors.userTypes) {
+        setErrors((prev) => ({ ...prev, userTypes: undefined }))
+      }
+    }
 
   const goBack = () => {
     window.location.href = "/"
@@ -390,12 +433,59 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
                   </div>
                 </div>
 
-                {/* Company and Role */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  
-
-                  
+                {/* User Type Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-3">
+                    I am interested in Ori as: *
+                  </label>
+                  <div className="space-y-3">
+                    <div className="flex items-center">
+                      <input
+                        id="advisor"
+                        type="checkbox"
+                        checked={formData.userTypes.advisor}
+                        onChange={handleCheckboxChange("advisor")}
+                        className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled={isSubmitting}
+                      />
+                      <label htmlFor="advisor" className="ml-3 text-sm font-medium text-[#483312] dark:text-gray-200">
+                        Advisor - Share my expertise with startups
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        id="investor"
+                        type="checkbox"
+                        checked={formData.userTypes.investor}
+                        onChange={handleCheckboxChange("investor")}
+                        className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled={isSubmitting}
+                      />
+                      <label htmlFor="investor" className="ml-3 text-sm font-medium text-[#483312] dark:text-gray-200">
+                        Investor - Discover investment opportunities
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        id="startup"
+                        type="checkbox"
+                        checked={formData.userTypes.startup}
+                        onChange={handleCheckboxChange("startup")}
+                        className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled={isSubmitting}
+                      />
+                      <label htmlFor="startup" className="ml-3 text-sm font-medium text-[#483312] dark:text-gray-200">
+                        Startup - Access expert guidance and funding
+                      </label>
+                    </div>
+                  </div>
+                  {errors.userTypes && (
+                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.userTypes}</p>
+                  )}
                 </div>
+
+                {/* Company and Role */}
+                <div className="grid md:grid-cols-2 gap-6"></div>
 
                 {/* Submit Button */}
                 <Button
