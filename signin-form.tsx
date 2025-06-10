@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
+import GoogleIcon from "./components/google-icon"
 
 interface SignInFormData {
   email: string
@@ -96,6 +97,12 @@ export default function SignInForm() {
     alert("Forgot password functionality will be implemented soon. Please contact info@ori.ventures for assistance.")
   }
 
+  const handleGoogleSignIn = () => {
+    // This is just a placeholder for now
+    console.log("Google sign in clicked")
+    alert("Google sign in functionality will be implemented soon.")
+  }
+
   return (
     <div className="min-h-screen bg-[#f8f8fb] dark:bg-[#434247] transition-colors duration-300">
       <div className="container mx-auto px-6 py-8">
@@ -128,6 +135,30 @@ export default function SignInForm() {
 
           {/* Sign In Form */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 transition-colors duration-300">
+            {/* Google Sign In Button */}
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none"
+              >
+                <GoogleIcon />
+                Sign in with Google
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white dark:bg-gray-800 text-[#59585e] dark:text-gray-300">
+                  Or sign in with email
+                </span>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Submit Error */}
               {errors.submit && (
