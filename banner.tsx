@@ -44,6 +44,12 @@ export default function Banner() {
           >
             About
           </button>
+          <button
+            onClick={() => (window.location.href = "/signup")}
+            className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+          >
+            Sign Up
+          </button>
           <DarkModeToggle />
         </div>
 
@@ -80,6 +86,15 @@ export default function Banner() {
                 className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
               >
                 About
+              </button>
+              <button
+                onClick={() => {
+                  window.location.href = "/signup"
+                  setIsMenuOpen(false)
+                }}
+                className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+              >
+                Sign Up
               </button>
             </div>
           </div>
