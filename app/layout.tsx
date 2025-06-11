@@ -3,6 +3,7 @@ import { Jura } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ModalProvider } from "@/components/modal-provider"
+import { AuthProvider } from "@/components/auth-provider"
 
 const jura = Jura({
   subsets: ["latin"],
@@ -20,7 +21,9 @@ export default function RootLayout({
     <html lang="en" className={jura.variable}>
       <body className="font-jura">
         <ThemeProvider>
-          <ModalProvider>{children}</ModalProvider>
+          <AuthProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

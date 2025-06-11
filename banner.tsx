@@ -1,11 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User } from "lucide-react"
 import DarkModeToggle from "./components/dark-mode-toggle"
+import { useAuth } from "./components/auth-provider"
 
 export default function Banner() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user, loading } = useAuth()
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -17,6 +19,10 @@ export default function Banner() {
 
   const navigateToHome = () => {
     window.location.href = "/"
+  }
+
+  const navigateToProfile = () => {
+    window.location.href = "/profile"
   }
 
   return (
@@ -44,18 +50,36 @@ export default function Banner() {
           >
             About
           </button>
-          <button
-            onClick={() => (window.location.href = "/signin")}
-            className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => (window.location.href = "/signup")}
-            className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-          >
-            Sign Up
-          </button>
+
+          {!loading && (
+            <>
+              {user ? (
+                <button
+                  onClick={navigateToProfile}
+                  className="inline-flex items-center text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                >
+                  <User className="w-5 h-5 mr-2" />
+                  Profile
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => (window.location.href = "/signin")}
+                    className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => (window.location.href = "/signup")}
+                    className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
+            </>
+          )}
+
           <DarkModeToggle />
         </div>
 
@@ -93,24 +117,44 @@ export default function Banner() {
               >
                 About
               </button>
-              <button
-                onClick={() => {
-                  window.location.href = "/signin"
-                  setIsMenuOpen(false)
-                }}
-                className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => {
-                  window.location.href = "/signup"
-                  setIsMenuOpen(false)
-                }}
-                className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-              >
-                Sign Up
-              </button>
+
+              {!loading && (
+                <>
+                  {user ? (
+                    <button
+                      onClick={() => {
+                        navigateToProfile()
+                        setIsMenuOpen(false)
+                      }}
+                      className="flex items-center w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                    >
+                      <User className="w-5 h-5 mr-2" />
+                      Profile
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          window.location.href = "/signin"
+                          setIsMenuOpen(false)
+                        }}
+                        className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                      >
+                        Sign In
+                      </button>
+                      <button
+                        onClick={() => {
+                          window.location.href = "/signup"
+                          setIsMenuOpen(false)
+                        }}
+                        className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                      >
+                        Sign Up
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}
