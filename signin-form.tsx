@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 import GoogleIcon from "./components/google-icon"
-import { useAuth } from "./contexts/auth-context"
 
 interface SignInFormData {
   email: string
@@ -21,8 +20,6 @@ interface FormErrors {
 }
 
 export default function SignInForm() {
-  const { signInWithEmail, signInWithGoogle } = useAuth()
-
   const [formData, setFormData] = useState<SignInFormData>({
     email: "",
     password: "",
@@ -58,26 +55,20 @@ export default function SignInForm() {
     setErrors({})
 
     try {
-      await signInWithEmail(formData.email, formData.password)
-      // Redirect will happen automatically via auth state change
+      // Simulate authentication process
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // For now, we'll simulate a successful login
+      // In a real app, you would authenticate with your backend
+      console.log("Sign in attempt:", formData.email)
+
+      // Redirect to dashboard or home page
       window.location.href = "/"
-    } catch (error: any) {
+    } catch (error) {
       console.error("Sign in error:", error)
 
-      let errorMessage = "Invalid email or password. Please try again."
-
-      if (error.code === "auth/user-not-found") {
-        errorMessage = "No account found with this email address."
-      } else if (error.code === "auth/wrong-password") {
-        errorMessage = "Incorrect password. Please try again."
-      } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address."
-      } else if (error.code === "auth/too-many-requests") {
-        errorMessage = "Too many failed attempts. Please try again later."
-      }
-
       setErrors({
-        submit: errorMessage,
+        submit: "Invalid email or password. Please try again.",
       })
     } finally {
       setIsSubmitting(false)
@@ -106,20 +97,10 @@ export default function SignInForm() {
     alert("Forgot password functionality will be implemented soon. Please contact info@ori.ventures for assistance.")
   }
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsSubmitting(true)
-      await signInWithGoogle()
-      // Redirect will happen automatically via auth state change
-      window.location.href = "/"
-    } catch (error: any) {
-      console.error("Google sign in error:", error)
-      setErrors({
-        submit: "Failed to sign in with Google. Please try again.",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+  const handleGoogleSignIn = () => {
+    // This is just a placeholder for now
+    console.log("Google sign in clicked")
+    alert("Google sign in functionality will be implemented soon.")
   }
 
   return (
@@ -159,8 +140,7 @@ export default function SignInForm() {
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                disabled={isSubmitting}
-                className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none"
               >
                 <GoogleIcon />
                 Sign in with Google

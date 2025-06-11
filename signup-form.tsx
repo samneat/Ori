@@ -6,8 +6,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
+import emailjs from "@emailjs/browser"
+import { EMAILJS_CONFIG } from "./lib/emailjs-config"
 import GoogleIcon from "./components/google-icon"
-import { useAuth } from "./contexts/auth-context"
 
 interface SignUpFormData {
   firstName: string
@@ -37,8 +38,6 @@ interface FormErrors {
 }
 
 export default function SignUpForm() {
-  const { signUpWithEmail, signInWithGoogle } = useAuth()
-
   const [formData, setFormData] = useState<SignUpFormData>({
     firstName: "",
     lastName: "",
@@ -97,9 +96,10 @@ export default function SignUpForm() {
       newErrors.role = "Role is required"
     }
 
-    // Check if at least one user type is selected
-    if (!formData.userTypes.advisor && !formData.userTypes.investor && !formData.userTypes.startup) {
-      newErrors.userTypes = "Please select at least one user type"
+    // Check if exactly one user type is selected
+    const selectedTypes = Object.values(formData.userTypes).filter(Boolean).length
+    if (selectedTypes === 0) {
+      newErrors.userTypes = "Please select one user type"
     }
 
     setErrors(newErrors)
@@ -115,28 +115,90 @@ export default function SignUpForm() {
     setErrors({})
 
     try {
-      await signUpWithEmail(formData.email, formData.password, formData)
-      setIsSuccess(true)
+      // Check if EmailJS is properly configured
+      if (!EMAILJS_CONFIG.SERVICE_ID || !EMAILJS_CONFIG.TEMPLATE_ID || !EMAILJS_CONFIG.PUBLIC_KEY) {
+        throw new Error("EmailJS configuration is incomplete")
+      }
 
-      // Reset form after success
-      setTimeout(() => {
-        window.location.href = "/"
-      }, 2000)
-    } catch (error: any) {
+      // Prepare template parameters for EmailJS
+      const selectedUserTypes = Object.entries(formData.userTypes)
+        .filter(([_, selected]) => selected)
+        .map(([type, _]) => type)
+        .join(", ")
+
+      const templateParams = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        company: formData.company,
+        role: formData.role,
+        user_types: selectedUserTypes,
+        full_name: `${formData.firstName} ${formData.lastName}`,
+        to_email: "info@ori.ventures",
+        subject: "New Ori Ventures Sign Up",
+        message: `New user registration:
+    
+Name: ${formData.firstName} ${formData.lastName}
+Email: ${formData.email}
+Company: ${formData.company}
+Role: ${formData.role}
+User Types: ${selectedUserTypes}
+Registration Date: ${new Date().toLocaleDateString()}
+Registration Time: ${new Date().toLocaleTimeString()}`,
+      }
+
+      console.log("Sending registration email with EmailJS...")
+
+      // Send email using EmailJS
+      const response = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY,
+      )
+
+      console.log("EmailJS response:", response)
+
+      if (response.status === 200) {
+        setIsSuccess(true)
+
+        // Reset form after success
+        setTimeout(() => {
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            company: "",
+            role: "",
+            userTypes: {
+              advisor: false,
+              investor: false,
+              startup: false,
+            },
+          })
+          setIsSuccess(false)
+          window.location.href = "/"
+        }, 3000)
+      } else {
+        throw new Error(`EmailJS returned status: ${response.status}`)
+      }
+    } catch (error) {
       console.error("Registration error:", error)
 
       let errorMessage = "Failed to create your account. Please try again."
 
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "An account with this email already exists. Please sign in instead."
-      } else if (error.code === "auth/weak-password") {
-        errorMessage = "Password is too weak. Please choose a stronger password."
-      } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address."
+      if (error instanceof Error) {
+        if (error.message.includes("configuration")) {
+          errorMessage = "Registration service is not properly configured. Please contact support."
+        } else if (error.message.includes("network") || error.message.includes("fetch")) {
+          errorMessage = "Network error. Please check your connection and try again."
+        }
       }
 
       setErrors({
-        submit: errorMessage,
+        submit: `${errorMessage} If the problem persists, contact us directly at info@ori.ventures`,
       })
     } finally {
       setIsSubmitting(false)
@@ -160,8 +222,9 @@ export default function SignUpForm() {
       setFormData((prev) => ({
         ...prev,
         userTypes: {
-          ...prev.userTypes,
-          [type]: e.target.checked,
+          advisor: type === "advisor",
+          investor: type === "investor",
+          startup: type === "startup",
         },
       }))
       // Clear error when user makes a selection
@@ -174,20 +237,10 @@ export default function SignUpForm() {
     window.location.href = "/"
   }
 
-  const handleGoogleSignUp = async () => {
-    try {
-      setIsSubmitting(true)
-      await signInWithGoogle()
-      // Redirect will happen automatically via auth state change
-      window.location.href = "/"
-    } catch (error: any) {
-      console.error("Google sign up error:", error)
-      setErrors({
-        submit: "Failed to sign up with Google. Please try again.",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+  const handleGoogleSignUp = () => {
+    // This is just a placeholder for now
+    console.log("Google sign up clicked")
+    alert("Google sign up functionality will be implemented soon.")
   }
 
   return (
@@ -235,7 +288,7 @@ export default function SignUpForm() {
               </div>
               <h2 className="text-2xl font-medium text-[#483312] dark:text-gray-100 mb-4">Welcome to Ori Ventures!</h2>
               <p className="text-lg text-[#59585e] dark:text-gray-300">
-                Your account has been created successfully. Redirecting you now...
+                Your account has been created successfully. We'll be in touch soon with next steps.
               </p>
             </div>
           ) : (
@@ -246,8 +299,7 @@ export default function SignUpForm() {
                 <button
                   type="button"
                   onClick={handleGoogleSignUp}
-                  disabled={isSubmitting}
-                  className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none"
                 >
                   <GoogleIcon />
                   Sign up with Google
@@ -417,13 +469,14 @@ export default function SignUpForm() {
                 {/* User Type Selection */}
                 <div>
                   <label className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-3">
-                    I am interested in Ori as: *
+                    I am interested in Ori as: * (select one)
                   </label>
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <input
                         id="advisor"
-                        type="checkbox"
+                        type="radio"
+                        name="userType"
                         checked={formData.userTypes.advisor}
                         onChange={handleCheckboxChange("advisor")}
                         className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -436,7 +489,8 @@ export default function SignUpForm() {
                     <div className="flex items-center">
                       <input
                         id="investor"
-                        type="checkbox"
+                        type="radio"
+                        name="userType"
                         checked={formData.userTypes.investor}
                         onChange={handleCheckboxChange("investor")}
                         className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -449,7 +503,8 @@ export default function SignUpForm() {
                     <div className="flex items-center">
                       <input
                         id="startup"
-                        type="checkbox"
+                        type="radio"
+                        name="userType"
                         checked={formData.userTypes.startup}
                         onChange={handleCheckboxChange("startup")}
                         className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -466,48 +521,7 @@ export default function SignUpForm() {
                 </div>
 
                 {/* Company and Role */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="company"
-                      className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-2"
-                    >
-                      Company *
-                    </label>
-                    <Input
-                      id="company"
-                      type="text"
-                      value={formData.company}
-                      onChange={handleInputChange("company")}
-                      className={`w-full h-12 px-4 border-2 transition-colors duration-200 ${
-                        errors.company
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-300 dark:border-gray-600 focus:border-[#bb2649] dark:focus:border-[#E0DEED]"
-                      } dark:bg-gray-700 dark:text-gray-100`}
-                      disabled={isSubmitting}
-                    />
-                    {errors.company && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.company}</p>}
-                  </div>
-
-                  <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-2">
-                      Role *
-                    </label>
-                    <Input
-                      id="role"
-                      type="text"
-                      value={formData.role}
-                      onChange={handleInputChange("role")}
-                      className={`w-full h-12 px-4 border-2 transition-colors duration-200 ${
-                        errors.role
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-300 dark:border-gray-600 focus:border-[#bb2649] dark:focus:border-[#E0DEED]"
-                      } dark:bg-gray-700 dark:text-gray-100`}
-                      disabled={isSubmitting}
-                    />
-                    {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
-                  </div>
-                </div>
+                <div className="grid md:grid-cols-2 gap-6"></div>
 
                 {/* Submit Button */}
                 <Button
