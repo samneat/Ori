@@ -1,11 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User, LogOut } from "lucide-react"
 import DarkModeToggle from "./components/dark-mode-toggle"
+import { useAuth } from "./contexts/auth-context"
 
 export default function Banner() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const { user, logout, loading } = useAuth()
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -17,6 +20,32 @@ export default function Banner() {
 
   const navigateToHome = () => {
     window.location.href = "/"
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      window.location.href = "/"
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full py-4 px-6 lg:px-8 bg-[#fceed8] dark:bg-[#434247] transition-colors duration-300">
+        <div className="container mx-auto flex justify-between items-center">
+          <img
+            src="/images/ori-logo-light.svg"
+            alt="ORI"
+            className="h-16 object-contain dark:brightness-0 dark:invert transition-all duration-300"
+          />
+          <div className="animate-pulse">
+            <div className="h-8 w-24 bg-gray-300 dark:bg-gray-600 rounded"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -44,18 +73,56 @@ export default function Banner() {
           >
             About
           </button>
-          <button
-            onClick={() => (window.location.href = "/signin")}
-            className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => (window.location.href = "/signup")}
-            className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-          >
-            Sign Up
-          </button>
+
+          {user ? (
+            /* Authenticated User Menu */
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center space-x-2 text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+              >
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL || "/placeholder.svg"}
+                    alt={user.displayName || "User"}
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  <User className="w-6 h-6" />
+                )}
+                <span>{user.displayName || user.email}</span>
+              </button>
+
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Unauthenticated User Buttons */
+            <>
+              <button
+                onClick={() => (window.location.href = "/signin")}
+                className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => (window.location.href = "/signup")}
+                className="text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+              >
+                Sign Up
+              </button>
+            </>
+          )}
+
           <DarkModeToggle />
         </div>
 
@@ -93,24 +160,55 @@ export default function Banner() {
               >
                 About
               </button>
-              <button
-                onClick={() => {
-                  window.location.href = "/signin"
-                  setIsMenuOpen(false)
-                }}
-                className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => {
-                  window.location.href = "/signup"
-                  setIsMenuOpen(false)
-                }}
-                className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
-              >
-                Sign Up
-              </button>
+
+              {user ? (
+                <>
+                  <div className="flex items-center space-x-2 py-2">
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL || "/placeholder.svg"}
+                        alt={user.displayName || "User"}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <User className="w-6 h-6 text-[#483312] dark:text-gray-100" />
+                    )}
+                    <span className="text-lg font-medium text-[#483312] dark:text-gray-100">
+                      {user.displayName || user.email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      window.location.href = "/signin"
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.location.href = "/signup"
+                      setIsMenuOpen(false)
+                    }}
+                    className="block w-full text-left text-lg font-medium text-[#483312] dark:text-gray-100 hover:text-[#bb2649] dark:hover:text-[#E0DEED] transition-colors duration-300"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
