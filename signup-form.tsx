@@ -6,9 +6,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
-import emailjs from "@emailjs/browser"
-import { EMAILJS_CONFIG } from "./lib/emailjs-config"
 import GoogleIcon from "./components/google-icon"
+import { createUserWithEmail, signInWithGoogle } from "./lib/firebase-auth"
+import { FirebaseError } from "firebase/app"
 
 interface SignUpFormData {
   firstName: string
@@ -18,11 +18,7 @@ interface SignUpFormData {
   confirmPassword: string
   company: string
   role: string
-  userTypes: {
-    advisor: boolean
-    investor: boolean
-    startup: boolean
-  }
+  userType: "advisor" | "investor" | "startup" | ""
 }
 
 interface FormErrors {
@@ -33,7 +29,7 @@ interface FormErrors {
   confirmPassword?: string
   company?: string
   role?: string
-  userTypes?: string
+  userType?: string
   submit?: string
 }
 
@@ -46,11 +42,7 @@ export default function SignUpForm() {
     confirmPassword: "",
     company: "",
     role: "",
-    userTypes: {
-      advisor: false,
-      investor: false,
-      startup: false,
-    },
+    userType: "",
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
@@ -96,10 +88,8 @@ export default function SignUpForm() {
       newErrors.role = "Role is required"
     }
 
-    // Check if exactly one user type is selected
-    const selectedTypes = Object.values(formData.userTypes).filter(Boolean).length
-    if (selectedTypes === 0) {
-      newErrors.userTypes = "Please select one user type"
+    if (!formData.userType) {
+      newErrors.userType = "Please select one user type"
     }
 
     setErrors(newErrors)
@@ -115,90 +105,59 @@ export default function SignUpForm() {
     setErrors({})
 
     try {
-      // Check if EmailJS is properly configured
-      if (!EMAILJS_CONFIG.SERVICE_ID || !EMAILJS_CONFIG.TEMPLATE_ID || !EMAILJS_CONFIG.PUBLIC_KEY) {
-        throw new Error("EmailJS configuration is incomplete")
-      }
-
-      // Prepare template parameters for EmailJS
-      const selectedUserTypes = Object.entries(formData.userTypes)
-        .filter(([_, selected]) => selected)
-        .map(([type, _]) => type)
-        .join(", ")
-
-      const templateParams = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
+      const { user, userProfile } = await createUserWithEmail(formData.email, formData.password, {
         email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         company: formData.company,
         role: formData.role,
-        user_types: selectedUserTypes,
-        full_name: `${formData.firstName} ${formData.lastName}`,
-        to_email: "info@ori.ventures",
-        subject: "New Ori Ventures Sign Up",
-        message: `New user registration:
-    
-Name: ${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Company: ${formData.company}
-Role: ${formData.role}
-User Types: ${selectedUserTypes}
-Registration Date: ${new Date().toLocaleDateString()}
-Registration Time: ${new Date().toLocaleTimeString()}`,
-      }
+        userType: formData.userType as "advisor" | "investor" | "startup",
+      })
 
-      console.log("Sending registration email with EmailJS...")
+      console.log("User created successfully:", user.uid)
+      setIsSuccess(true)
 
-      // Send email using EmailJS
-      const response = await emailjs.send(
-        EMAILJS_CONFIG.SERVICE_ID,
-        EMAILJS_CONFIG.TEMPLATE_ID,
-        templateParams,
-        EMAILJS_CONFIG.PUBLIC_KEY,
-      )
-
-      console.log("EmailJS response:", response)
-
-      if (response.status === 200) {
-        setIsSuccess(true)
-
-        // Reset form after success
-        setTimeout(() => {
-          setFormData({
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            company: "",
-            role: "",
-            userTypes: {
-              advisor: false,
-              investor: false,
-              startup: false,
-            },
-          })
-          setIsSuccess(false)
-          window.location.href = "/"
-        }, 3000)
-      } else {
-        throw new Error(`EmailJS returned status: ${response.status}`)
-      }
+      // Reset form after success
+      setTimeout(() => {
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          company: "",
+          role: "",
+          userType: "",
+        })
+        setIsSuccess(false)
+        window.location.href = "/"
+      }, 3000)
     } catch (error) {
       console.error("Registration error:", error)
 
       let errorMessage = "Failed to create your account. Please try again."
 
-      if (error instanceof Error) {
-        if (error.message.includes("configuration")) {
-          errorMessage = "Registration service is not properly configured. Please contact support."
-        } else if (error.message.includes("network") || error.message.includes("fetch")) {
-          errorMessage = "Network error. Please check your connection and try again."
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            errorMessage = "An account with this email already exists."
+            break
+          case "auth/weak-password":
+            errorMessage = "Password is too weak. Please choose a stronger password."
+            break
+          case "auth/invalid-email":
+            errorMessage = "Please enter a valid email address."
+            break
+          case "auth/operation-not-allowed":
+            errorMessage = "Email/password accounts are not enabled. Please contact support."
+            break
+          default:
+            errorMessage = "An error occurred during registration. Please try again."
         }
       }
 
       setErrors({
-        submit: `${errorMessage} If the problem persists, contact us directly at info@ori.ventures`,
+        submit: errorMessage,
       })
     } finally {
       setIsSubmitting(false)
@@ -217,30 +176,60 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
     }
   }
 
-  const handleCheckboxChange =
-    (type: "advisor" | "investor" | "startup") => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        userTypes: {
-          advisor: type === "advisor",
-          investor: type === "investor",
-          startup: type === "startup",
-        },
-      }))
-      // Clear error when user makes a selection
-      if (errors.userTypes) {
-        setErrors((prev) => ({ ...prev, userTypes: undefined }))
-      }
+  const handleUserTypeChange = (type: "advisor" | "investor" | "startup") => {
+    setFormData((prev) => ({
+      ...prev,
+      userType: type,
+    }))
+    // Clear error when user makes a selection
+    if (errors.userType) {
+      setErrors((prev) => ({ ...prev, userType: undefined }))
     }
+  }
 
   const goBack = () => {
     window.location.href = "/"
   }
 
-  const handleGoogleSignUp = () => {
-    // This is just a placeholder for now
-    console.log("Google sign up clicked")
-    alert("Google sign up functionality will be implemented soon.")
+  const handleGoogleSignUp = async () => {
+    try {
+      setIsSubmitting(true)
+      const { user, userProfile, isNewUser } = await signInWithGoogle()
+
+      console.log("Google sign up successful:", user.uid)
+
+      if (isNewUser) {
+        // Redirect to profile completion page or show success
+        setIsSuccess(true)
+        setTimeout(() => {
+          window.location.href = "/"
+        }, 2000)
+      } else {
+        // User already exists, redirect to dashboard
+        window.location.href = "/"
+      }
+    } catch (error) {
+      console.error("Google sign up error:", error)
+
+      let errorMessage = "Failed to sign up with Google. Please try again."
+
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/popup-closed-by-user":
+            errorMessage = "Sign up was cancelled."
+            break
+          case "auth/popup-blocked":
+            errorMessage = "Popup was blocked. Please allow popups and try again."
+            break
+          default:
+            errorMessage = "An error occurred during Google sign up. Please try again."
+        }
+      }
+
+      setErrors({ submit: errorMessage })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -288,7 +277,7 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
               </div>
               <h2 className="text-2xl font-medium text-[#483312] dark:text-gray-100 mb-4">Welcome to Ori Ventures!</h2>
               <p className="text-lg text-[#59585e] dark:text-gray-300">
-                Your account has been created successfully. We'll be in touch soon with next steps.
+                Your account has been created successfully. Redirecting you to the platform...
               </p>
             </div>
           ) : (
@@ -299,7 +288,8 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
                 <button
                   type="button"
                   onClick={handleGoogleSignUp}
-                  className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none"
+                  disabled={isSubmitting}
+                  className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <GoogleIcon />
                   Sign up with Google
@@ -477,8 +467,8 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
                         id="advisor"
                         type="radio"
                         name="userType"
-                        checked={formData.userTypes.advisor}
-                        onChange={handleCheckboxChange("advisor")}
+                        checked={formData.userType === "advisor"}
+                        onChange={() => handleUserTypeChange("advisor")}
                         className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         disabled={isSubmitting}
                       />
@@ -491,8 +481,8 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
                         id="investor"
                         type="radio"
                         name="userType"
-                        checked={formData.userTypes.investor}
-                        onChange={handleCheckboxChange("investor")}
+                        checked={formData.userType === "investor"}
+                        onChange={() => handleUserTypeChange("investor")}
                         className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         disabled={isSubmitting}
                       />
@@ -505,8 +495,8 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
                         id="startup"
                         type="radio"
                         name="userType"
-                        checked={formData.userTypes.startup}
-                        onChange={handleCheckboxChange("startup")}
+                        checked={formData.userType === "startup"}
+                        onChange={() => handleUserTypeChange("startup")}
                         className="w-4 h-4 text-[#bb2649] bg-gray-100 border-gray-300 rounded focus:ring-[#bb2649] dark:focus:ring-[#E0DEED] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         disabled={isSubmitting}
                       />
@@ -515,13 +505,52 @@ Registration Time: ${new Date().toLocaleTimeString()}`,
                       </label>
                     </div>
                   </div>
-                  {errors.userTypes && (
-                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.userTypes}</p>
-                  )}
+                  {errors.userType && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.userType}</p>}
                 </div>
 
                 {/* Company and Role */}
-                <div className="grid md:grid-cols-2 gap-6"></div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label
+                      htmlFor="company"
+                      className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-2"
+                    >
+                      Company *
+                    </label>
+                    <Input
+                      id="company"
+                      type="text"
+                      value={formData.company}
+                      onChange={handleInputChange("company")}
+                      className={`w-full h-12 px-4 border-2 transition-colors duration-200 ${
+                        errors.company
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#bb2649] dark:focus:border-[#E0DEED]"
+                      } dark:bg-gray-700 dark:text-gray-100`}
+                      disabled={isSubmitting}
+                    />
+                    {errors.company && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.company}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="role" className="block text-sm font-medium text-[#483312] dark:text-gray-200 mb-2">
+                      Role *
+                    </label>
+                    <Input
+                      id="role"
+                      type="text"
+                      value={formData.role}
+                      onChange={handleInputChange("role")}
+                      className={`w-full h-12 px-4 border-2 transition-colors duration-200 ${
+                        errors.role
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#bb2649] dark:focus:border-[#E0DEED]"
+                      } dark:bg-gray-700 dark:text-gray-100`}
+                      disabled={isSubmitting}
+                    />
+                    {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
+                  </div>
+                </div>
 
                 {/* Submit Button */}
                 <Button

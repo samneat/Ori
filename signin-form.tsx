@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 import GoogleIcon from "./components/google-icon"
+import { signInWithEmail, signInWithGoogle } from "./lib/firebase-auth"
+import { FirebaseError } from "firebase/app"
 
 interface SignInFormData {
   email: string
@@ -55,20 +57,40 @@ export default function SignInForm() {
     setErrors({})
 
     try {
-      // Simulate authentication process
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      // For now, we'll simulate a successful login
-      // In a real app, you would authenticate with your backend
-      console.log("Sign in attempt:", formData.email)
+      const user = await signInWithEmail(formData.email, formData.password)
+      console.log("Sign in successful:", user.uid)
 
       // Redirect to dashboard or home page
       window.location.href = "/"
     } catch (error) {
       console.error("Sign in error:", error)
 
+      let errorMessage = "Invalid email or password. Please try again."
+
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/user-not-found":
+            errorMessage = "No account found with this email address."
+            break
+          case "auth/wrong-password":
+            errorMessage = "Incorrect password. Please try again."
+            break
+          case "auth/invalid-email":
+            errorMessage = "Please enter a valid email address."
+            break
+          case "auth/user-disabled":
+            errorMessage = "This account has been disabled. Please contact support."
+            break
+          case "auth/too-many-requests":
+            errorMessage = "Too many failed attempts. Please try again later."
+            break
+          default:
+            errorMessage = "An error occurred during sign in. Please try again."
+        }
+      }
+
       setErrors({
-        submit: "Invalid email or password. Please try again.",
+        submit: errorMessage,
       })
     } finally {
       setIsSubmitting(false)
@@ -97,10 +119,40 @@ export default function SignInForm() {
     alert("Forgot password functionality will be implemented soon. Please contact info@ori.ventures for assistance.")
   }
 
-  const handleGoogleSignIn = () => {
-    // This is just a placeholder for now
-    console.log("Google sign in clicked")
-    alert("Google sign in functionality will be implemented soon.")
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsSubmitting(true)
+      const { user, userProfile, isNewUser } = await signInWithGoogle()
+
+      console.log("Google sign in successful:", user.uid)
+
+      // Redirect to dashboard or home page
+      window.location.href = "/"
+    } catch (error) {
+      console.error("Google sign in error:", error)
+
+      let errorMessage = "Failed to sign in with Google. Please try again."
+
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/popup-closed-by-user":
+            errorMessage = "Sign in was cancelled."
+            break
+          case "auth/popup-blocked":
+            errorMessage = "Popup was blocked. Please allow popups and try again."
+            break
+          case "auth/account-exists-with-different-credential":
+            errorMessage = "An account already exists with this email using a different sign-in method."
+            break
+          default:
+            errorMessage = "An error occurred during Google sign in. Please try again."
+        }
+      }
+
+      setErrors({ submit: errorMessage })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -140,7 +192,8 @@ export default function SignInForm() {
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none"
+                disabled={isSubmitting}
+                className="w-full h-14 flex items-center justify-center gap-3 text-lg font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 rounded-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <GoogleIcon />
                 Sign in with Google
