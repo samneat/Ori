@@ -21,14 +21,27 @@ export default function ProfileScreen() {
     }
   }
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | any) => {
+    let dateObj: Date
+
+    if (date && typeof date.toDate === "function") {
+      // Firestore Timestamp
+      dateObj = date.toDate()
+    } else if (date instanceof Date) {
+      // Already a Date object
+      dateObj = date
+    } else {
+      // String or other format
+      dateObj = new Date(date)
+    }
+
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    }).format(date)
+    }).format(dateObj)
   }
 
   const getUserTypeLabel = (userType: string) => {
@@ -203,11 +216,7 @@ export default function ProfileScreen() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-[#483312] dark:text-gray-200 mb-1">Member Since</h3>
-                  <p className="text-[#59585e] dark:text-gray-300">
-                    {formatDate(
-                      userProfile.createdAt.toDate ? userProfile.createdAt.toDate() : new Date(userProfile.createdAt),
-                    )}
-                  </p>
+                  <p className="text-[#59585e] dark:text-gray-300">{formatDate(userProfile.createdAt)}</p>
                 </div>
               </div>
 
@@ -218,13 +227,7 @@ export default function ProfileScreen() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-[#483312] dark:text-gray-200 mb-1">Last Login</h3>
-                  <p className="text-[#59585e] dark:text-gray-300">
-                    {formatDate(
-                      userProfile.lastLoginAt.toDate
-                        ? userProfile.lastLoginAt.toDate()
-                        : new Date(userProfile.lastLoginAt),
-                    )}
-                  </p>
+                  <p className="text-[#59585e] dark:text-gray-300">{formatDate(userProfile.lastLoginAt)}</p>
                 </div>
               </div>
             </div>

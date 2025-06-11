@@ -5,7 +5,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth"
-import { doc, setDoc, getDoc } from "firebase/firestore"
+import { doc, setDoc, getDoc, type Timestamp } from "firebase/firestore"
 import { auth, db } from "./firebase"
 
 export interface UserProfile {
@@ -16,8 +16,19 @@ export interface UserProfile {
   company?: string
   role?: string
   userType: "advisor" | "investor" | "startup"
-  createdAt: Date
-  lastLoginAt: Date
+  createdAt: Date | Timestamp
+  lastLoginAt: Date | Timestamp
+}
+
+// Helper function to convert Firestore timestamps to dates
+const convertTimestamp = (timestamp: any): Date => {
+  if (timestamp && typeof timestamp.toDate === "function") {
+    return timestamp.toDate()
+  }
+  if (timestamp instanceof Date) {
+    return timestamp
+  }
+  return new Date(timestamp)
 }
 
 // Create user with email and password
@@ -41,7 +52,7 @@ export const createUserWithEmail = async (
     await setDoc(doc(db, "users", user.uid), userProfile)
 
     return { user, userProfile }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating user:", error)
     throw error
   }
@@ -63,7 +74,7 @@ export const signInWithEmail = async (email: string, password: string) => {
     )
 
     return user
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error signing in:", error)
     throw error
   }
@@ -105,7 +116,7 @@ export const signInWithGoogle = async () => {
 
       return { user, userProfile: userDoc.data() as UserProfile, isNewUser: false }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error signing in with Google:", error)
     throw error
   }
@@ -115,7 +126,7 @@ export const signInWithGoogle = async () => {
 export const signOutUser = async () => {
   try {
     await signOut(auth)
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error signing out:", error)
     throw error
   }
@@ -126,10 +137,17 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
   try {
     const userDoc = await getDoc(doc(db, "users", uid))
     if (userDoc.exists()) {
-      return userDoc.data() as UserProfile
+      const data = userDoc.data()
+      if (data) {
+        return {
+          ...data,
+          createdAt: convertTimestamp(data.createdAt),
+          lastLoginAt: convertTimestamp(data.lastLoginAt),
+        } as UserProfile
+      }
     }
     return null
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error getting user profile:", error)
     throw error
   }
